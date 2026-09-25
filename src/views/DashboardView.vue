@@ -1,6 +1,7 @@
 <script setup>
 import PanelSection from '../components/common/PanelSection.vue'
 import StatCard from '../components/common/StatCard.vue'
+import StepFlowPanel from '../components/restoration/StepFlowPanel.vue'
 import BatchGrid from '../components/restoration/BatchGrid.vue'
 import EnvironmentCards from '../components/restoration/EnvironmentCards.vue'
 import HeroBanner from '../components/restoration/HeroBanner.vue'
@@ -8,12 +9,13 @@ import {
   restorationBatches,
   restorationEnvironment,
   restorationHero,
-  restorationSteps,
 } from '../data/restorationData'
 import { useRestorationOverview } from '../composables/useRestorationOverview'
+import { useStepWorkflow } from '../composables/useStepWorkflow'
 
 const { batchCount, environmentCount, highRiskCount, ownerCount } =
   useRestorationOverview()
+const { currentStage } = useStepWorkflow()
 
 const statCards = [
   { label: '在册批次', value: batchCount.value },
@@ -41,10 +43,8 @@ const statCards = [
         <BatchGrid :items="restorationBatches" />
       </PanelSection>
 
-      <PanelSection title="当日工序" badge="修复流程">
-        <ol class="step-list">
-          <li v-for="step in restorationSteps" :key="step">{{ step }}</li>
-        </ol>
+      <PanelSection title="当日工序" :badge="currentStage">
+        <StepFlowPanel />
       </PanelSection>
     </section>
 
@@ -70,16 +70,6 @@ const statCards = [
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   gap: 24px;
-}
-
-.step-list {
-  margin: 0;
-  padding-left: 20px;
-  color: #5c4a33;
-}
-
-.step-list li + li {
-  margin-top: 12px;
 }
 
 @media (max-width: 980px) {
